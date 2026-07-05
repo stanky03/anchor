@@ -126,17 +126,10 @@ export function MeetingCopilot() {
     return onMarkLost(markLostAndAnnounce);
   }, []);
 
-  // In-app keyboard shortcut: L (web also gets Ctrl+Shift+L; on desktop the
-  // OS-level shortcut owns that combo).
+  // In-app keyboard shortcuts: L marks lost; C opens catch-up.
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.repeat || event.defaultPrevented) return;
-      if (event.key !== "l" && event.key !== "L") return;
-
-      const plainL = !event.ctrlKey && !event.metaKey && !event.altKey;
-      const comboL =
-        event.ctrlKey && event.shiftKey && !event.metaKey && !isDesktop();
-      if (!plainL && !comboL) return;
 
       const target = event.target as HTMLElement | null;
       if (
@@ -147,8 +140,26 @@ export function MeetingCopilot() {
         return;
       }
 
-      event.preventDefault();
-      markLostAndAnnounce();
+      const sessionActive = useCaptionStore.getState().mode !== "idle";
+      const key = event.key.toLowerCase();
+
+      if (key === "l") {
+        const plainL = !event.ctrlKey && !event.metaKey && !event.altKey;
+        const comboL =
+          event.ctrlKey && event.shiftKey && !event.metaKey && !isDesktop();
+        if (!plainL && !comboL) return;
+
+        event.preventDefault();
+        markLostAndAnnounce();
+        return;
+      }
+
+      if (key === "c" && sessionActive) {
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+        event.preventDefault();
+        setMissedOpen(true);
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -255,16 +266,29 @@ export function MeetingCopilot() {
         onChange={handleFileChange}
       />
 
-      <main className="mx-auto grid w-full max-w-6xl min-h-0 flex-1 grid-cols-1 content-start gap-4 overflow-y-auto px-4 pt-2 pb-28 lg:grid-cols-[minmax(0,1fr)_360px] lg:content-stretch lg:overflow-hidden">
-        <div className="flex flex-col gap-4 lg:min-h-0">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto grid w-full max-w-6xl min-h-0 flex-1 grid-cols-1 content-start gap-4 overflow-y-auto px-4 pt-2 pb-32 sm:pb-28 lg:grid-cols-[minmax(0,1fr)_minmax(280px,360px)] lg:content-stretch lg:overflow-hidden"
+      >
+        <aside
+          aria-label="Meeting orientation"
+          className="order-1 flex flex-col gap-4 lg:order-2 lg:min-h-0 lg:overflow-y-auto lg:pr-1"
+        >
+          <CurrentThreadPanel />
+          <DoINeedToDoAnythingPanel />
+          <AskTheMeeting onOpenCatchUp={() => setMissedOpen(true)} />
+        </aside>
+
+        <div className="order-2 flex flex-col gap-4 lg:order-1 lg:min-h-0">
           <SummaryPanel />
           <CaptionDisplay />
           {demoEnded && (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-4 text-card-foreground shadow-sm">
+            <div className="flex flex-col gap-3 rounded-2xl border bg-card p-4 text-card-foreground shadow-sm sm:flex-row sm:items-center sm:justify-between">
               <p className="text-sm">
-                Demo finished — start listening or replay the demo.
+                Demo finished. You can start listening or replay the demo.
               </p>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button size="sm" onClick={startLive}>
                   Start listening
                 </Button>
@@ -275,18 +299,13 @@ export function MeetingCopilot() {
             </div>
           )}
         </div>
-
-        <aside
-          aria-label="Meeting information"
-          className="flex flex-col gap-4 lg:min-h-0 lg:overflow-y-auto lg:pr-1"
-        >
-          <CurrentThreadPanel />
-          <AskTheMeeting onOpenCatchUp={() => setMissedOpen(true)} />
-          <DoINeedToDoAnythingPanel />
-        </aside>
       </main>
 
-      <div className="fixed inset-x-0 bottom-6 z-40 mx-auto flex w-fit max-w-[calc(100vw-2rem)] flex-wrap items-center justify-center gap-2 rounded-full border bg-background/80 p-2 shadow-lg backdrop-blur">
+      <div
+        role="toolbar"
+        aria-label="Meeting recovery controls"
+        className="fixed inset-x-0 bottom-4 z-40 mx-auto flex w-fit max-w-[calc(100vw-1.5rem)] flex-wrap items-center justify-center gap-2 rounded-full border bg-background/90 p-2 shadow-lg backdrop-blur sm:bottom-6"
+      >
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -301,18 +320,28 @@ export function MeetingCopilot() {
               I&apos;m lost
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Mark where you lost the thread (press L)</TooltipContent>
+          <TooltipContent>
+            Mark where you lost the thread (keyboard: L)
+          </TooltipContent>
         </Tooltip>
         <LostMarkerPill />
-        <Button
-          size="xl"
-          variant={lostMarkerTimestamp === null ? "secondary" : "default"}
-          disabled={!sessionActive}
-          onClick={() => setMissedOpen(true)}
-        >
-          <Sparkles aria-hidden />
-          Catch me up
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="xl"
+              variant={lostMarkerTimestamp === null ? "secondary" : "default"}
+              disabled={!sessionActive}
+              aria-keyshortcuts="c"
+              onClick={() => setMissedOpen(true)}
+            >
+              <Sparkles aria-hidden />
+              Catch me up
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            Short recap since you were lost (keyboard: C)
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       <MissedSegmentModal open={missedOpen} onOpenChange={setMissedOpen} />

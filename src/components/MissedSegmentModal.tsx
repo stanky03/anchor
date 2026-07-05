@@ -121,7 +121,7 @@ export function MissedSegmentModal({
         <DialogHeader>
           <DialogTitle>Catch me up</DialogTitle>
           <DialogDescription>
-            Get a short recap of what you missed.
+            A short, practical recap of what changed while you were away.
           </DialogDescription>
         </DialogHeader>
 

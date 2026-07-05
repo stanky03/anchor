@@ -112,8 +112,8 @@ export function AskTheMeeting({ onOpenCatchUp }: AskTheMeetingProps) {
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
           {sessionActive
-            ? "Quick answers from the last few minutes."
-            : "Start listening to ask."}
+            ? "Short answers from the last few minutes of the meeting."
+            : "Start listening, then pick a prompt."}
         </p>
 
         <div className="flex flex-col gap-1.5">

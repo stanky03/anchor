@@ -24,7 +24,7 @@ export function SummaryPanel() {
       <CardContent>
         <p className="text-base leading-relaxed">
           {summary?.text ??
-            "Once you start listening, a plain-language summary of the meeting will appear here."}
+            "A short plain-language recap of the meeting so far will appear here."}
         </p>
       </CardContent>
     </Card>

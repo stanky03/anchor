@@ -248,6 +248,15 @@ html[data-text-size="x-large"] {
   html {
     @apply font-sans;
   }
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible,
+  [role="button"]:focus-visible {
+    @apply outline-none ring-3 ring-ring/60 ring-offset-2 ring-offset-background;
+  }
 }
 
 @font-face {

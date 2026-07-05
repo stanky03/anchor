@@ -63,8 +63,8 @@ export function CaptionDisplay() {
           {visibleCaptions.length === 0 && !partialChunk ? (
             <p className="text-base text-muted-foreground">
               {mode === "idle"
-                ? "Press Start listening (top right) and captions will appear here."
-                : "Listening — captions will appear here in a moment."}
+                ? "Start listening and captions will appear here."
+                : "Listening — captions will show up as speech comes in."}
             </p>
           ) : (
             visibleCaptions.map((chunk) => {
@@ -76,12 +76,12 @@ export function CaptionDisplay() {
 
               return (
                 <article key={chunk.id} className="space-y-1">
-                  <div className="flex items-center gap-2 text-sm opacity-80">
-                    <span className="font-semibold">{chunk.speaker}</span>
-                    <time dateTime={`PT${chunk.timestamp}S`}>
-                      {formatTimestamp(chunk.timestamp)}
-                    </time>
-                  </div>
+                  <time
+                    className="text-sm text-muted-foreground"
+                    dateTime={`PT${chunk.timestamp}S`}
+                  >
+                    {formatTimestamp(chunk.timestamp)}
+                  </time>
                   <p
                     className="leading-relaxed"
                     style={{

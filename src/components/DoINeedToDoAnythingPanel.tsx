@@ -83,7 +83,9 @@ export function DoINeedToDoAnythingPanel() {
                       {formatTimestamp(signal.timestamp)}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
-                      {signal.confidence} confidence
+                      {signal.confidence === "high"
+                        ? "fairly clear match"
+                        : "uncertain match"}
                     </span>
                   </div>
                   <p>{signal.text}</p>
