@@ -1,5 +1,5 @@
-import { MeetingCopilot } from "@/components/MeetingCopilot";
+import { MeetingCompanion } from "@/components/companion/MeetingCompanion";
 
 export default function Home() {
-  return <MeetingCopilot />;
+  return <MeetingCompanion />;
 }

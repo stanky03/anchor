@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Accessible Meeting Copilot",
+  title: "Meeting Catch-Up Companion",
   description:
-    "Live captions, cognitive accessibility controls, and meeting recovery for virtual meetings.",
+    "Recover when you lose the thread in a live meeting with calm catch-up answers.",
 };
 
 export default function RootLayout({
