@@ -34,6 +34,14 @@ export type CurrentThread = {
   updatedAt?: number;
 };
 
+export type MeetingSignal = {
+  type: "topic" | "decision" | "task" | "question" | "mention";
+  text: string;
+  timestamp: number;
+  confidence: "low" | "medium" | "high";
+  sourceChunkIds: string[];
+};
+
 export type UserAccessibilitySettings = {
   userName: string;
   themePreset: ThemePreset;

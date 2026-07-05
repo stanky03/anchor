@@ -3,6 +3,10 @@
 import { create } from "zustand";
 
 import {
+  deriveMeetingSignals,
+  meetingSignalsEqual,
+} from "@/lib/meeting-signals";
+import {
   currentThreadsEqual,
   deriveCurrentThread,
 } from "@/lib/current-thread";
@@ -17,13 +21,14 @@ import {
   type CatchUpWindow,
 } from "@/lib/transcript";
 import type {
-  ActionItem,
   CaptionChunk,
   CurrentThread,
   MeetingMode,
+  MeetingSignal,
   MeetingSummary,
   TranscriptChunk,
 } from "@/types";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 function refreshCurrentThreadState(
   transcriptChunks: TranscriptChunk[],
@@ -34,6 +39,40 @@ function refreshCurrentThreadState(
   return currentThreadsEqual(currentThread, next) ? currentThread : next;
 }
 
+function refreshMeetingSignalsState(
+  transcriptChunks: TranscriptChunk[],
+  playbackTimeSec: number,
+  meetingSignals: MeetingSignal[],
+): MeetingSignal[] {
+  const userName = useSettingsStore.getState().userName;
+  const next = deriveMeetingSignals(
+    transcriptChunks,
+    userName,
+    playbackTimeSec,
+  );
+  return meetingSignalsEqual(meetingSignals, next) ? meetingSignals : next;
+}
+
+function refreshDerivedMeetingState(
+  transcriptChunks: TranscriptChunk[],
+  playbackTimeSec: number,
+  currentThread: CurrentThread,
+  meetingSignals: MeetingSignal[],
+) {
+  return {
+    currentThread: refreshCurrentThreadState(
+      transcriptChunks,
+      playbackTimeSec,
+      currentThread,
+    ),
+    meetingSignals: refreshMeetingSignalsState(
+      transcriptChunks,
+      playbackTimeSec,
+      meetingSignals,
+    ),
+  };
+}
+
 type CaptionState = {
   mode: MeetingMode;
   isCapturing: boolean;
@@ -41,8 +80,8 @@ type CaptionState = {
   captions: CaptionChunk[];
   transcriptChunks: TranscriptChunk[];
   currentThread: CurrentThread;
+  meetingSignals: MeetingSignal[];
   lostMarkerTimestamp: number | null;
-  actionItems: ActionItem[];
   summary: MeetingSummary | null;
   playbackTimeSec: number;
   sessionStartedAtMs: number | null;
@@ -64,7 +103,7 @@ type CaptionState = {
     fromTimestamp: number,
     toTimestamp: number,
   ) => string;
-  setActionItems: (actionItems: ActionItem[]) => void;
+  refreshMeetingSignals: () => void;
   setSummary: (summary: MeetingSummary | null) => void;
   setPlaybackTimeSec: (playbackTimeSec: number) => void;
   setSessionStartedAtMs: (sessionStartedAtMs: number | null) => void;
@@ -78,8 +117,8 @@ const INITIAL_STATE = {
   captions: [] as CaptionChunk[],
   transcriptChunks: [] as TranscriptChunk[],
   currentThread: {} as CurrentThread,
+  meetingSignals: [] as MeetingSignal[],
   lostMarkerTimestamp: null as number | null,
-  actionItems: [] as ActionItem[],
   summary: null as MeetingSummary | null,
   playbackTimeSec: 0,
   sessionStartedAtMs: null as number | null,
@@ -111,10 +150,11 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
       return {
         captions: [...state.captions, chunk],
         transcriptChunks: nextTranscriptChunks,
-        currentThread: refreshCurrentThreadState(
+        ...refreshDerivedMeetingState(
           nextTranscriptChunks,
           state.playbackTimeSec,
           state.currentThread,
+          state.meetingSignals,
         ),
       };
     }),
@@ -129,10 +169,11 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
       return {
         captions,
         transcriptChunks: nextTranscriptChunks,
-        currentThread: refreshCurrentThreadState(
+        ...refreshDerivedMeetingState(
           nextTranscriptChunks,
           state.playbackTimeSec,
           state.currentThread,
+          state.meetingSignals,
         ),
       };
     }),
@@ -150,10 +191,11 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
 
       return {
         transcriptChunks: nextTranscriptChunks,
-        currentThread: refreshCurrentThreadState(
+        ...refreshDerivedMeetingState(
           nextTranscriptChunks,
           state.playbackTimeSec,
           state.currentThread,
+          state.meetingSignals,
         ),
       };
     }),
@@ -167,10 +209,11 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
 
       return {
         transcriptChunks: nextTranscriptChunks,
-        currentThread: refreshCurrentThreadState(
+        ...refreshDerivedMeetingState(
           nextTranscriptChunks,
           state.playbackTimeSec,
           state.currentThread,
+          state.meetingSignals,
         ),
       };
     }),
@@ -216,7 +259,14 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
       ),
     );
   },
-  setActionItems: (actionItems) => set({ actionItems }),
+  refreshMeetingSignals: () =>
+    set((state) => ({
+      meetingSignals: refreshMeetingSignalsState(
+        state.transcriptChunks,
+        state.playbackTimeSec,
+        state.meetingSignals,
+      ),
+    })),
   setSummary: (summary) => set({ summary }),
   setPlaybackTimeSec: (playbackTimeSec) =>
     set((state) => {
@@ -229,10 +279,11 @@ export const useCaptionStore = create<CaptionState>((set, get) => ({
       return {
         playbackTimeSec,
         transcriptChunks: nextTranscriptChunks,
-        currentThread: refreshCurrentThreadState(
+        ...refreshDerivedMeetingState(
           nextTranscriptChunks,
           playbackTimeSec,
           state.currentThread,
+          state.meetingSignals,
         ),
       };
     }),

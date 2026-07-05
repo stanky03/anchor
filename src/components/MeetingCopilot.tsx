@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { Flag, Sparkles } from "lucide-react";
 
-import { ActionItemsList } from "@/components/ActionItemsList";
+import { DoINeedToDoAnythingPanel } from "@/components/DoINeedToDoAnythingPanel";
 import { AskTheMeeting } from "@/components/AskTheMeeting";
 import { CaptionDisplay } from "@/components/CaptionDisplay";
 import { CurrentThreadPanel } from "@/components/CurrentThreadPanel";
@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/tooltip";
 import {
   DEMO_TRANSCRIPT,
-  getDemoActionItemsUpTo,
   getDemoCaptionsUpTo,
   runDemoPlayback,
 } from "@/lib/demo";
@@ -62,7 +61,6 @@ export function MeetingCopilot() {
   const setIsCapturing = useCaptionStore((state) => state.setIsCapturing);
   const setIsDemoMode = useCaptionStore((state) => state.setIsDemoMode);
   const setCaptions = useCaptionStore((state) => state.setCaptions);
-  const setActionItems = useCaptionStore((state) => state.setActionItems);
   const setSummary = useCaptionStore((state) => state.setSummary);
   const setPlaybackTimeSec = useCaptionStore(
     (state) => state.setPlaybackTimeSec,
@@ -179,7 +177,6 @@ export function MeetingCopilot() {
     await runDemoPlayback((timeSec) => {
       setPlaybackTimeSec(timeSec);
       setCaptions(getDemoCaptionsUpTo(timeSec));
-      setActionItems(getDemoActionItemsUpTo(timeSec));
     }, controller.signal);
 
     setIsCapturing(false);
@@ -285,7 +282,7 @@ export function MeetingCopilot() {
         >
           <CurrentThreadPanel />
           <AskTheMeeting onOpenCatchUp={() => setMissedOpen(true)} />
-          <ActionItemsList />
+          <DoINeedToDoAnythingPanel />
         </aside>
       </main>
 
