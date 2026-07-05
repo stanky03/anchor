@@ -1,6 +1,7 @@
 // OpenAI Realtime transcription — client-safe types, constants, and helpers.
 
 export const DEFAULT_TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
+export const DEFAULT_TRANSCRIBE_LANGUAGE = "en";
 
 // The transcription session config is bound to the ephemeral client secret,
 // so the URL carries no params. (Fallback if the server ever rejects this:

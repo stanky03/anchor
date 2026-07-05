@@ -3,6 +3,7 @@ import OpenAI from "openai";
 
 import { isOpenAiConfigured } from "@/lib/llm";
 import {
+  DEFAULT_TRANSCRIBE_LANGUAGE,
   DEFAULT_TRANSCRIBE_MODEL,
   type RealtimeSecretResponse,
 } from "@/lib/stt";
@@ -36,7 +37,7 @@ export async function POST() {
           input: {
             format: { type: "audio/pcm", rate: 24000 },
             noise_reduction: { type: "near_field" },
-            transcription: { model },
+            transcription: { model, language: DEFAULT_TRANSCRIBE_LANGUAGE },
             turn_detection: {
               type: "server_vad",
               silence_duration_ms: 600,
