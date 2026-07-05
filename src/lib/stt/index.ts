@@ -1,24 +1,38 @@
-import type { TranscriptChunk } from "@/types";
+// OpenAI Realtime transcription — client-safe types, constants, and helpers.
 
-export type StreamingSttConfig = {
-  apiKey: string;
-  model?: string;
-  diarize?: boolean;
+export const DEFAULT_TRANSCRIBE_MODEL = "gpt-4o-mini-transcribe";
+
+// The transcription session config is bound to the ephemeral client secret,
+// so the URL carries no params. (Fallback if the server ever rejects this:
+// append ?intent=transcription.)
+export const REALTIME_WSS_URL = "wss://api.openai.com/v1/realtime";
+
+export type RealtimeSecretResponse = {
+  value: string;
+  expiresAt: number;
+  model: string;
 };
 
-export type SttTranscriptEvent = TranscriptChunk & {
-  speaker?: string;
-};
-
-export function getDeepgramApiKey(): string | undefined {
-  return process.env.DEEPGRAM_API_KEY;
+// Browsers can't set an Authorization header on a WebSocket; the realtime
+// endpoint reads the ephemeral secret from this subprotocol instead (the
+// same mechanism openai-js uses; ek_ secrets are sanctioned for browsers).
+export function realtimeSubprotocols(clientSecret: string): string[] {
+  return ["realtime", `openai-insecure-api-key.${clientSecret}`];
 }
 
-export function isSttConfigured(): boolean {
-  return Boolean(getDeepgramApiKey());
-}
+const BASE64_CHUNK_BYTES = 8192;
 
-// Phase 1: implement WebSocket proxy to Deepgram streaming API.
-export async function createStreamingTranscriber(): Promise<null> {
-  return null;
+export function pcm16ToBase64(samples: Int16Array): string {
+  const bytes = new Uint8Array(
+    samples.buffer,
+    samples.byteOffset,
+    samples.byteLength,
+  );
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += BASE64_CHUNK_BYTES) {
+    binary += String.fromCharCode(
+      ...bytes.subarray(offset, offset + BASE64_CHUNK_BYTES),
+    );
+  }
+  return btoa(binary);
 }

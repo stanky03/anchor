@@ -11,16 +11,19 @@ export function useAudioCapture() {
   const [error, setError] = useState<string | null>(null);
   const [warning, setWarning] = useState<string | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [micStream, setMicStream] = useState<MediaStream | null>(null);
   const [file, setFile] = useState<File | null>(null);
 
   const stopCapture = useCallback(() => {
     stream?.getTracks().forEach((track) => track.stop());
+    micStream?.getTracks().forEach((track) => track.stop());
     setStream(null);
+    setMicStream(null);
     setFile(null);
     setSource(null);
     setError(null);
     setWarning(null);
-  }, [stream]);
+  }, [stream, micStream]);
 
   const startTabCapture = useCallback(async () => {
     setError(null);
@@ -58,6 +61,32 @@ export function useAudioCapture() {
     }
   }, []);
 
+  const startMicFallback = useCallback(async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        },
+      });
+
+      setMicStream(mediaStream);
+      setWarning("No system audio — using your microphone instead");
+      return mediaStream;
+    } catch (err) {
+      const name = err instanceof DOMException ? err.name : "";
+      const message =
+        name === "NotAllowedError" || name === "PermissionDeniedError"
+          ? "Microphone access denied — allow the microphone to get live captions"
+          : name === "NotFoundError"
+            ? "No microphone found"
+            : "Microphone capture failed";
+      setError(message);
+      throw new Error(message);
+    }
+  }, []);
+
   const startFileCapture = useCallback(async (selectedFile: File) => {
     setError(null);
     setFile(selectedFile);
@@ -72,6 +101,7 @@ export function useAudioCapture() {
     stream,
     file,
     startTabCapture,
+    startMicFallback,
     startFileCapture,
     stopCapture,
   };

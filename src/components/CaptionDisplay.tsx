@@ -9,6 +9,7 @@ import { useSettingsStore } from "@/stores/settingsStore";
 
 export function CaptionDisplay() {
   const captions = useCaptionStore((state) => state.captions);
+  const transcriptChunks = useCaptionStore((state) => state.transcriptChunks);
   const mode = useCaptionStore((state) => state.mode);
   const playbackTimeSec = useCaptionStore((state) => state.playbackTimeSec);
   const readingLevel = useSettingsStore((state) => state.readingLevel);
@@ -31,6 +32,13 @@ export function CaptionDisplay() {
     return filtered;
   }, [captions, effectiveTime, reduceCognitiveLoad]);
 
+  // The newest in-progress (non-final) transcript chunk, shown as a muted
+  // line; its id flips to a final caption on completion, so no duplication.
+  const partialChunk = useMemo(() => {
+    const partials = transcriptChunks.filter((chunk) => !chunk.isFinal);
+    return partials.length > 0 ? partials[partials.length - 1] : null;
+  }, [transcriptChunks]);
+
   return (
     <section
       aria-label="Live captions"
@@ -52,7 +60,7 @@ export function CaptionDisplay() {
           aria-relevant="additions"
           className="space-y-4 text-xl"
         >
-          {visibleCaptions.length === 0 ? (
+          {visibleCaptions.length === 0 && !partialChunk ? (
             <p className="text-base text-muted-foreground">
               {mode === "idle"
                 ? "Press Start listening (top right) and captions will appear here."
@@ -89,6 +97,11 @@ export function CaptionDisplay() {
                 </article>
               );
             })
+          )}
+          {partialChunk && (
+            <p className="italic leading-relaxed text-muted-foreground">
+              {partialChunk.text}…
+            </p>
           )}
         </div>
       </ScrollArea>

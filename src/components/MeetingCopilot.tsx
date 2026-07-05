@@ -28,6 +28,7 @@ import {
 import { formatTimestamp } from "@/lib/captions";
 import { isDesktop, onMarkLost } from "@/lib/desktop";
 import { useAudioCapture } from "@/hooks/useAudioCapture";
+import { useTranscription } from "@/hooks/useTranscription";
 import { useCaptionStore } from "@/stores/captionStore";
 
 function markLostAndAnnounce() {
@@ -69,8 +70,14 @@ export function MeetingCopilot() {
     (state) => state.setSessionStartedAtMs,
   );
 
-  const { warning, startTabCapture, startFileCapture, stopCapture } =
-    useAudioCapture();
+  const {
+    warning,
+    startTabCapture,
+    startMicFallback,
+    startFileCapture,
+    stopCapture,
+  } = useAudioCapture();
+  const transcription = useTranscription();
 
   const stopSessionClock = () => {
     if (clockIntervalRef.current !== null) {
@@ -98,6 +105,7 @@ export function MeetingCopilot() {
     demoAbortRef.current?.abort();
     demoAbortRef.current = null;
     stopSessionClock();
+    transcription.stop();
     stopCapture();
     reset();
     setDemoEnded(false);
@@ -187,13 +195,18 @@ export function MeetingCopilot() {
     setIsDemoMode(false);
 
     try {
-      await startTabCapture();
+      const mediaStream = await startTabCapture();
+      let audioStream = mediaStream;
+      if (mediaStream.getAudioTracks().length === 0) {
+        audioStream = await startMicFallback();
+      }
       setIsCapturing(true);
       startSessionClock();
       announce("Listening started");
-      // Phase 1: connect tab audio stream to STT pipeline.
-    } catch {
+      void transcription.start(audioStream);
+    } catch (err) {
       setMode("idle");
+      if (err instanceof Error && err.message) announce(err.message);
     }
   };
 
@@ -228,7 +241,7 @@ export function MeetingCopilot() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background">
       <MeetingHeader
-        captureWarning={warning}
+        captureWarning={transcription.error ?? warning}
         onStartDemo={startDemo}
         onStartLive={startLive}
         onStop={stopSession}
