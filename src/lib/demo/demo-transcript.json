@@ -1,0 +1,103 @@
+{
+  "title": "Sprint Planning — Noisy Remote Call",
+  "durationSec": 210,
+  "summary": "The team is fixing a login bug by Friday. Sarah will work on the API. Marcus will write a document about how sign-in works by Wednesday. The old dashboard stays for now; the new design comes later. Alex will email stakeholders after the meeting.",
+  "chunks": [
+    {
+      "id": "c1",
+      "speaker": "Alex (PM)",
+      "text": "Okay, let's recap. We need the login fix shipped by Friday. Sarah owns the API piece.",
+      "timestamp": 5,
+      "isActionItem": true
+    },
+    {
+      "id": "c2",
+      "speaker": "Sarah (Dev)",
+      "text": "Uh, I can do the API, but we should probably sync with Marcus on the auth flow before I start.",
+      "timestamp": 18
+    },
+    {
+      "id": "c3",
+      "speaker": "Jordan (Design)",
+      "text": "Sorry, quick question — are we keeping the old dashboard or switching to the new one?",
+      "timestamp": 32
+    },
+    {
+      "id": "c4",
+      "speaker": "Alex (PM)",
+      "text": "Good question. Let's keep the old dashboard for v1. Redesign is Q2.",
+      "timestamp": 42,
+      "isDecision": true
+    },
+    {
+      "id": "c5",
+      "speaker": "Sarah (Dev)",
+      "text": "Got it. So we'll need to refactor the OAuth callback handler for the IdP integration. Marcus should document the flow.",
+      "timestamp": 80
+    },
+    {
+      "id": "c6",
+      "speaker": "Alex (PM)",
+      "text": "Agreed. Marcus, can you have the auth doc ready by Wednesday?",
+      "timestamp": 95,
+      "isActionItem": true
+    },
+    {
+      "id": "c7",
+      "speaker": "Sarah (Dev)",
+      "text": "I'll block time tomorrow to review it with him.",
+      "timestamp": 105
+    },
+    {
+      "id": "c8",
+      "speaker": "Jordan (Design)",
+      "text": "Works for me. I'll update the Figma with the v1 dashboard labels only.",
+      "timestamp": 150,
+      "isActionItem": true
+    },
+    {
+      "id": "c9",
+      "speaker": "Alex (PM)",
+      "text": "Perfect. So to summarize: login fix by Friday, Sarah on API, Marcus on auth doc by Wednesday, dashboard stays as-is for v1. I'll send a stakeholder email after this call.",
+      "timestamp": 170,
+      "isDecision": true,
+      "isActionItem": true
+    },
+    {
+      "id": "c10",
+      "speaker": "Sarah (Dev)",
+      "text": "Sounds good. Thanks everyone.",
+      "timestamp": 195
+    }
+  ],
+  "actionItems": [
+    {
+      "id": "a1",
+      "assignee": "Sarah",
+      "task": "API fix for login",
+      "timestamp": 15,
+      "sourceCaptionId": "c1"
+    },
+    {
+      "id": "a2",
+      "assignee": "Marcus",
+      "task": "Auth flow documentation by Wednesday",
+      "timestamp": 95,
+      "sourceCaptionId": "c6"
+    },
+    {
+      "id": "a3",
+      "assignee": "Jordan",
+      "task": "Update Figma with v1 dashboard labels",
+      "timestamp": 150,
+      "sourceCaptionId": "c8"
+    },
+    {
+      "id": "a4",
+      "assignee": "Alex",
+      "task": "Send stakeholder email after call",
+      "timestamp": 170,
+      "sourceCaptionId": "c9"
+    }
+  ]
+}
