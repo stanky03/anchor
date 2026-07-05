@@ -45,28 +45,40 @@ Design principles (in priority order):
 
 ## 3. Screen anatomy
 
-One window, one column, three zones. No sidebars.
+One window, two columns at desktop width (single stacked column below `lg`). Meeting information lives in visible cards, not hidden panels.
 
 ```
-┌──────────────────────────────────────────────────────┐
-│  ● Listening        Catch-Up Companion    ⚙  📌  ⋯   │  header (56px)
-├──────────────────────────────────────────────────────┤
-│                                                      │
-│   ┌───────────────── current thread ─────────────┐   │  slim card
-│   │ Topic: auth documentation                    │   │
-│   └───────────────────────────────────────────────┘   │
-│                                                      │
-│   ┌──────────────── live captions ────────────────┐  │  fills space
-│   │                                               │  │  rounded-2xl
-│   │   …caption lines, generous line-height…       │  │
-│   │                                               │  │
-│   └───────────────────────────────────────────────┘  │
-│                                                      │
-│        ╭──────────────────────────────────╮          │
-│        │ ⚑ I'm lost    ✦ Catch me up      │          │  floating bar
-│        ╰──────────────────────────────────╯          │  bottom-6
-└──────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────────┐
+│  ● Listening      Catch-Up Companion         🧍  📌  ⋯      │  header (56px)
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌────────────── summary (blue) ─────────┐ ┌─ ask (violet)┐│
+│  │ plain-language meeting summary,       │ │ What did I   ││
+│  │ full width — room to breathe          │ │ miss? · What ││
+│  └───────────────────────────────────────┘ │ are we decid…││
+│                                            │ + inline     ││
+│  ┌──────────── live captions ────────────┐ │ answers      ││
+│  │  (neutral hero, internal scroll)      │ └──────────────┘│
+│  │                                       │ ┌─ tasks (green)┐
+│  │  …caption lines, generous leading…    │ │ • Sarah → API ││
+│  │                                       │ │   fix  0:15   ││
+│  └───────────────────────────────────────┘ └──────────────┘│
+│                                                            │
+│           ╭──────────────────────────────────╮             │
+│           │ ⚑ I'm lost    ✦ Catch me up      │             │  floating bar
+│           ╰──────────────────────────────────╯             │  bottom-6
+└────────────────────────────────────────────────────────────┘
 ```
+
+**Section color identity** — each card carries a quiet accent (4px left border + tinted icon + colored heading; 6–8% background wash except high-contrast, which keeps pure black surfaces). Color is never the only differentiator (icon + heading text always present). AA-checked per theme:
+
+| Section | calm-light | calm-dark | high-contrast | dyslexia |
+|---|---|---|---|---|
+| Summary (blue) | `#1d4ed8` | `#93c5fd` | `#7dd3fc` | `#1d4ed8` |
+| Action items (green, = caption-action) | `#047857` | `#a6e3a1` | `#00e676` | `#56650a` |
+| Ask the meeting (violet, = caption-decision) | `#7c3aed` | `#cba6f7` | `#ff9df2` | `#4f55a7` |
+
+Live captions stay neutral — the hero stays calm; color lives on the satellites.
 
 ### Header
 - Left: status — pulsing green dot + "Listening" while capturing; "Demo" badge in demo mode; nothing when idle.
@@ -74,14 +86,19 @@ One window, one column, three zones. No sidebars.
 - Right: the **hero pill** plus utilities:
   - Idle → `[ 🖥 Start listening ]` — primary, size `xl`, the only prominent control on screen.
   - Capturing → same pill becomes `[ ■ Stop ]` (destructive variant).
-  - `⚙` settings icon → right-side sheet: your name (for mention detection), app-wide theme (calm light / calm dark / high contrast / dyslexia-friendly), text size, caption controls, action items.
+  - `🧍` accessibility icon → right-side **Accessibility** sheet: your name (for mention detection), app-wide theme (calm light / calm dark / high contrast / dyslexia-friendly), text size, caption comfort controls. Nothing else lives here — it exists to demonstrate accessibility support.
   - `📌` pin icon (desktop only) → always-on-top toggle, tooltip "Keep on top".
   - `⋯` overflow menu → Demo mode, Upload recording (demoted; they're developer/fallback paths).
 
-### Main column
-- Max width `48rem`, centered. Captions are the hero: `rounded-2xl`, soft border, `shadow-sm`, roomy padding.
-- "Current thread" is a slim one-line card above the captions (topic / last decision), per PDD's Current Thread panel.
-- Bottom padding clears the floating bar.
+### Main grid
+- Max width `72rem`, centered; `lg` two columns (`1fr / 360px` rail), stacked below.
+- Left: Summary (blue, full width — room to breathe) above the captions hero (neutral, internal scroll).
+- Right rail: **Ask the meeting** (violet) and **Action items** (green) — visible, not hidden in panels; rail scrolls independently at `lg`.
+- Bottom padding clears the floating bar; on mobile the page scrolls and captions keep a `45dvh` floor.
+
+### Ask the meeting (issue #8)
+- Five constrained prompts, never a chatbot: **What did I miss?** (opens the Catch-me-up dialog — one recovery flow, no duplicate answers), **What are we deciding?**, **Do I need to do anything?**, **Explain this simply** (inline term input; empty = latest confusing phrase), **What question should I ask?**.
+- Answers: 1–3 plain sentences from the last 3 minutes of transcript + a verbatim source snippet; skeleton while loading; retry on error; "Sample" badge without an API key. `/api/ask` mirrors `/api/missed` (Responses API, strict schema, deterministic fallback).
 
 ### Floating control bar
 - `fixed bottom-6`, centered, `w-fit`, `rounded-full`, `bg-background/80 backdrop-blur`, soft shadow.
@@ -129,7 +146,7 @@ The recovery moment — it must feel instant and structured.
 | Token | Choice |
 |---|---|
 | Radius | Pills (`rounded-full`) for actions; `rounded-2xl` for surfaces; base `--radius` may bump to 0.75rem |
-| Palette | Existing neutral oklch theme; single green status dot; no new brand hues |
+| Palette | Neutral oklch base + three quiet section hues (blue/green/violet, AA per theme); single green status dot |
 | Buttons | New `xl` (h-12, rounded-full, px-6, text-base) and `icon-xl` sizes in `ui/button.tsx` |
 | Icons | lucide-react, 20px in `xl` buttons: `ScreenShare`, `Square`, `Flag`, `Sparkles`, `Pin`, `Settings2`, `X` |
 | Depth | Soft borders + `shadow-sm`/`shadow-lg`; blur on the floating bar; no hard elevation |

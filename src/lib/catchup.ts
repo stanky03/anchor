@@ -112,12 +112,12 @@ export function normalizeCatchUpCard(
   };
 }
 
-const DECISION_PATTERN =
+export const DECISION_PATTERN =
   /\b(decid\w*|let'?s (keep|go with|stick with)|we('re| are) (keeping|going with))\b/i;
-const TASK_PATTERN =
+export const TASK_PATTERN =
   /\b(will|needs? to|should|can you|by (monday|tuesday|wednesday|thursday|friday|next week))\b/i;
 
-function stripOffsets(line: string): string {
+export function stripOffsets(line: string): string {
   return line.replace(/^\[\d+(\.\d+)?s\]\s*/, "").trim();
 }
 

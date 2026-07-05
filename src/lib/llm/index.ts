@@ -1,4 +1,4 @@
-import type { ReadingLevel } from "@/types";
+import type { AskPromptKey, ReadingLevel } from "@/types";
 
 export type LlmProvider = "openai" | "gemini";
 
@@ -58,4 +58,49 @@ export function buildCatchUpInput(
   toLabel: string,
 ) {
   return `Transcript from ${fromLabel} to ${toLabel} of the meeting:\n\n${transcript}`;
+}
+
+const ASK_TASKS: Record<AskPromptKey, string> = {
+  deciding:
+    "Task: state what is currently being decided or the most recent decision made in this window.",
+  tasks_for_me:
+    "Task: say whether anything in this window sounds like a task, deadline, or direct question for the participant. If nothing does, say so plainly.",
+  explain: "", // built dynamically from the term
+  suggest_question:
+    "Task: suggest one short, natural question the participant could ask aloud right now to rejoin the conversation.",
+};
+
+export function buildAskInstructions(
+  promptKey: AskPromptKey,
+  userName?: string,
+  term?: string,
+) {
+  const nameLine = userName?.trim()
+    ? `The participant's name is "${userName.trim()}".`
+    : "The participant has not given their name — treat anything that might be for them as uncertain.";
+
+  const task =
+    promptKey === "explain"
+      ? term?.trim()
+        ? `Task: explain "${term.trim()}" simply, as it is used in this meeting.`
+        : "Task: find the most likely confusing term, acronym, or phrase in this window and explain it simply."
+      : ASK_TASKS[promptKey];
+
+  return [
+    "You help a meeting participant follow a live meeting. You receive a transcript window; each line starts with a second offset like [95s].",
+    nameLine,
+    "",
+    task,
+    "",
+    "Rules:",
+    "- Answer in 1-3 short plain-language sentences (about grade 8 reading level).",
+    "- Use only this transcript window. If it doesn't answer the question, say so plainly.",
+    '- Use cautious wording for anything not explicit: "It sounds like…", "Possible task:". Never invent names, owners, or dates.',
+    "- There are no speaker labels — never attribute a statement to a person unless their name appears in the words.",
+    "- snippet: one short verbatim quote from the transcript that supports your answer, or null.",
+  ].join("\n");
+}
+
+export function buildAskInput(transcript: string) {
+  return `Transcript of the last few minutes of the meeting:\n\n${transcript}`;
 }

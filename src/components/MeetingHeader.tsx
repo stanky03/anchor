@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import {
   MonitorPlay,
   MoreHorizontal,
+  PersonStanding,
   Pin,
   PinOff,
-  Settings2,
   Square,
   Upload,
 } from "lucide-react";
@@ -128,13 +128,13 @@ export function MeetingHeader({
             <Button
               variant="ghost"
               size="icon-lg"
-              aria-label="Settings"
+              aria-label="Accessibility settings"
               onClick={onOpenSettings}
             >
-              <Settings2 />
+              <PersonStanding />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Settings</TooltipContent>
+          <TooltipContent>Accessibility settings</TooltipContent>
         </Tooltip>
 
         <DropdownMenu>

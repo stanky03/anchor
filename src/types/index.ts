@@ -80,3 +80,22 @@ export type MissedSegmentResponse = {
   card: CatchUpCard;
   sample?: boolean;
 };
+
+export type AskPromptKey =
+  | "deciding"
+  | "tasks_for_me"
+  | "explain"
+  | "suggest_question";
+
+export type AskRequest = {
+  promptKey: AskPromptKey;
+  term?: string;
+  transcript?: string;
+  userName?: string;
+};
+
+export type AskResponse = {
+  answer: string;
+  snippet?: string;
+  sample?: boolean;
+};

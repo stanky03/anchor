@@ -34,7 +34,7 @@ export function CaptionDisplay() {
   return (
     <section
       aria-label="Live captions"
-      className="flex min-h-0 flex-1 flex-col rounded-2xl border bg-card p-5 text-card-foreground shadow-sm"
+      className="flex min-h-[45dvh] flex-1 flex-col rounded-2xl border bg-card p-5 text-card-foreground shadow-sm lg:min-h-0"
     >
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-medium uppercase tracking-wide opacity-80">

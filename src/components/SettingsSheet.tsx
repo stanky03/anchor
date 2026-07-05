@@ -1,7 +1,6 @@
 "use client";
 
 import { AccessibilityPanel } from "@/components/AccessibilityPanel";
-import { ActionItemsList } from "@/components/ActionItemsList";
 import {
   Sheet,
   SheetContent,
@@ -20,15 +19,14 @@ export function SettingsSheet({ open, onOpenChange }: SettingsSheetProps) {
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full overflow-y-auto sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
+          <SheetTitle>Accessibility</SheetTitle>
           <SheetDescription>
-            Set your name, adjust how the app looks, and review detected
-            tasks.
+            Make the app work for you — name for mention detection, theme,
+            text size, and caption comfort.
           </SheetDescription>
         </SheetHeader>
         <div className="flex flex-col gap-4 px-4 pb-6">
           <AccessibilityPanel />
-          <ActionItemsList />
         </div>
       </SheetContent>
     </Sheet>

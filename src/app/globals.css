@@ -39,6 +39,12 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-section-summary: var(--section-summary);
+  --color-section-summary-tint: var(--section-summary-tint);
+  --color-section-tasks: var(--section-tasks);
+  --color-section-tasks-tint: var(--section-tasks-tint);
+  --color-section-ask: var(--section-ask);
+  --color-section-ask-tint: var(--section-ask-tint);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -84,11 +90,24 @@
   /* Caption semantic colors (AA on this theme's background). */
   --caption-decision: #7c3aed;
   --caption-action: #047857;
+  /* Section identity: accent (border/icon/heading, AA on card) + tint (card wash). */
+  --section-summary: #1d4ed8;
+  --section-summary-tint: color-mix(in oklab, #1d4ed8 7%, var(--card));
+  --section-tasks: #047857;
+  --section-tasks-tint: color-mix(in oklab, #047857 7%, var(--card));
+  --section-ask: #7c3aed;
+  --section-ask-tint: color-mix(in oklab, #7c3aed 7%, var(--card));
 }
 
 .dark {
   --caption-decision: #cba6f7;
   --caption-action: #a6e3a1;
+  --section-summary: #93c5fd;
+  --section-summary-tint: color-mix(in oklab, #93c5fd 8%, var(--card));
+  --section-tasks: #a6e3a1;
+  --section-tasks-tint: color-mix(in oklab, #a6e3a1 8%, var(--card));
+  --section-ask: #cba6f7;
+  --section-ask-tint: color-mix(in oklab, #cba6f7 8%, var(--card));
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -146,6 +165,13 @@ html[data-theme="high-contrast"] {
   --ring: #ffd400;
   --caption-decision: #ff9df2;
   --caption-action: #00e676;
+  /* No tint in high contrast: pure black surfaces stay pure black. */
+  --section-summary: #7dd3fc;
+  --section-summary-tint: var(--card);
+  --section-tasks: #00e676;
+  --section-tasks-tint: var(--card);
+  --section-ask: #ff9df2;
+  --section-ask-tint: var(--card);
 }
 
 html[data-theme="dyslexia"] {
@@ -168,6 +194,12 @@ html[data-theme="dyslexia"] {
   --ring: #a89e80;
   --caption-decision: #4f55a7;
   --caption-action: #56650a;
+  --section-summary: #1d4ed8;
+  --section-summary-tint: color-mix(in oklab, #1d4ed8 6%, var(--card));
+  --section-tasks: #56650a;
+  --section-tasks-tint: color-mix(in oklab, #56650a 6%, var(--card));
+  --section-ask: #4f55a7;
+  --section-ask-tint: color-mix(in oklab, #4f55a7 6%, var(--card));
 }
 
 html[data-theme="dyslexia"] body {
