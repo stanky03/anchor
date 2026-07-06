@@ -1,5 +1,5 @@
 appId: com.flexv2.meetingcompanion
-productName: Catch-Up Companion
+productName: Anchor
 directories:
   output: release
 # The main/preload bundles are self-contained (esbuild), so the project's

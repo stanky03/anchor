@@ -74,9 +74,7 @@ export function MeetingHeader({
   return (
     <header className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
       <div className="flex items-center gap-3">
-        <h1 className="text-base font-semibold tracking-tight">
-          Catch-Up Companion
-        </h1>
+        <h1 className="text-base font-semibold tracking-tight">Anchor</h1>
         {isCapturing && (
           <span className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="relative flex size-2.5">

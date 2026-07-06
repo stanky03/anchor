@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Catch-Up Companion",
+  title: "Anchor",
   description:
     "A calm assistive companion for rejoining live meetings when you lose the thread.",
 };
