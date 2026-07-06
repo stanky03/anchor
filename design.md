@@ -159,7 +159,14 @@ The recovery moment — it must feel instant and structured.
 - **No-audio hint** (Linux): small muted badge near the status dot — "Screen only, no system audio" — informative, not alarming.
 - **Stop** always fully tears down: stream tracks, session clock, transcript state.
 
-## 7. Out of scope (this iteration)
+## 7. Deployment & auth
+
+- **Hosting**: Vercel project `flexv2` (production: https://flexv2.vercel.app), GitHub-connected — pushes to `main` auto-deploy. `.vercelignore` excludes Electron artifacts (`release/`, `dist-electron/`) and build output.
+- **Auth**: Clerk (`@clerk/nextjs` v7, provisioned via the Vercel Marketplace as `clerk-aureolin-tree`). Wiring is **conditional on `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`**: without keys (local dev, the Electron shell) the app runs unauthenticated exactly as before; with keys, `src/middleware.ts` protects every route — pages redirect to the embedded `/sign-in`, `/api/*` returns 404 — and the header shows Clerk's `<UserButton />`.
+- **Env matrix**: `OPENAI_API_KEY` + `NEXT_PUBLIC_CLERK_SIGN_IN_URL` + Clerk keys live on Vercel (all environments); locally only `OPENAI_API_KEY` in `.env` (Clerk keys can be pulled into `.env.local` via `vercel env pull` when auth testing is wanted).
+- **Caveats**: the Clerk instance is a *development* instance (works on vercel.app, small user cap, "Development mode" badge) — a production Clerk instance needs a custom domain. Sign-ups should be set to **Restricted** (invite-only) in the Clerk dashboard so strangers can't register and use the OpenAI key.
+
+## 8. Out of scope (this iteration)
 
 - Frameless/translucent overlay window and screen-share invisibility (Cluely's stealth mode) — revisit after the core flow ships.
 - API-key settings UI for the packaged app (needed before the OpenAI phase ships to users; tracked as follow-up).

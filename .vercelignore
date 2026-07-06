@@ -1,0 +1,8 @@
+.next
+node_modules
+release
+dist-electron
+out
+.playwright-mcp
+electron
+scripts/dev-desktop.mjs

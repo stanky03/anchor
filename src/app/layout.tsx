@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { AuthProvider } from "@/components/AuthProvider";
 import { SkipToContent } from "@/components/SkipToContent";
 import { StatusAnnouncer } from "@/components/StatusAnnouncer";
 import { ThemeApplier } from "@/components/ThemeApplier";
@@ -35,10 +36,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SkipToContent />
-        <ThemeApplier />
-        <StatusAnnouncer />
-        <TooltipProvider>{children}</TooltipProvider>
+        <AuthProvider>
+          <SkipToContent />
+          <ThemeApplier />
+          <StatusAnnouncer />
+          <TooltipProvider>{children}</TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   );

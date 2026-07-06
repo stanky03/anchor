@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { UserButton } from "@clerk/nextjs";
 import {
   Mic,
   MonitorPlay,
@@ -161,6 +162,14 @@ export function MeetingHeader({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY && (
+          <UserButton
+            appearance={{
+              elements: { userButtonAvatarBox: "size-9" },
+            }}
+          />
+        )}
       </div>
     </header>
   );
