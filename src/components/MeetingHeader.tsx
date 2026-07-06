@@ -51,7 +51,6 @@ export function MeetingHeader({
 }: MeetingHeaderProps) {
   const mode = useCaptionStore((state) => state.mode);
   const isCapturing = useCaptionStore((state) => state.isCapturing);
-  const isDemoMode = useCaptionStore((state) => state.isDemoMode);
 
   const [desktop, setDesktop] = useState(false);
   const [pinned, setPinned] = useState(false);
@@ -78,8 +77,7 @@ export function MeetingHeader({
         <h1 className="text-base font-semibold tracking-tight">
           Catch-Up Companion
         </h1>
-        {isDemoMode && <Badge variant="secondary">Demo</Badge>}
-        {isCapturing && !isDemoMode && (
+        {isCapturing && (
           <span className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="relative flex size-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60 motion-reduce:hidden" />
@@ -127,23 +125,14 @@ export function MeetingHeader({
           </Tooltip>
         )}
 
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              aria-label="Accessibility settings"
-              onClick={onOpenSettings}
-            >
-              <PersonStanding />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Accessibility settings</TooltipContent>
-        </Tooltip>
+        <Button variant="outline" size="lg" onClick={onOpenSettings}>
+          <PersonStanding />
+          Accessibility
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-lg" aria-label="More options">
+            <Button variant="outline" size="icon-lg" aria-label="More options">
               <MoreHorizontal />
             </Button>
           </DropdownMenuTrigger>

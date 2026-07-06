@@ -2,32 +2,66 @@
 
 import { useEffect, useRef } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { formatTimestamp } from "@/lib/captions";
+import { cn } from "@/lib/utils";
 import type { CatchUpCard } from "@/types";
 
 type CatchUpCardViewProps = {
   card: CatchUpCard;
-  sample?: boolean;
 };
 
-function CardSection({
-  title,
-  items,
+function SectionLabel({
+  children,
+  className,
 }: {
-  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <h3
+      className={cn(
+        "text-xs font-semibold uppercase tracking-wider",
+        className,
+      )}
+    >
+      {children}
+    </h3>
+  );
+}
+
+// Scannable recap: each section is a colored small-caps label (same label
+// language as the rest of the app) with short lines under it — key items
+// in medium weight so highlights don't blend into a wall of text.
+function CardSection({
+  label,
+  labelClassName,
+  items,
+  emphasize,
+}: {
+  label: string;
+  labelClassName?: string;
   items: string[];
+  emphasize?: boolean;
 }) {
   if (items.length === 0) return null;
 
   return (
     <section className="space-y-1.5">
-      <h3 className="font-medium">{title}</h3>
-      <ul className="space-y-1">
+      <SectionLabel className={labelClassName}>{label}</SectionLabel>
+      <ul className="space-y-1.5">
         {items.map((item) => (
           <li key={item} className="flex gap-2">
-            <span aria-hidden="true">•</span>
-            <span>{item}</span>
+            <span aria-hidden className="text-muted-foreground">
+              •
+            </span>
+            <span
+              className={cn(
+                "leading-(--app-leading)",
+                emphasize && "font-medium",
+              )}
+            >
+              {item}
+            </span>
           </li>
         ))}
       </ul>
@@ -35,7 +69,7 @@ function CardSection({
   );
 }
 
-export function CatchUpCardView({ card, sample }: CatchUpCardViewProps) {
+export function CatchUpCardView({ card }: CatchUpCardViewProps) {
   const regionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,19 +90,12 @@ export function CatchUpCardView({ card, sample }: CatchUpCardViewProps) {
       role="region"
       aria-label="Catch-up recap"
       tabIndex={-1}
-      className="space-y-4 rounded-xl bg-muted p-4 text-sm outline-none"
+      className="space-y-5 rounded-xl bg-muted p-4 text-sm outline-none"
     >
-      <div className="flex flex-wrap items-center gap-2 text-muted-foreground">
-        <span>
-          Covers {formatTimestamp(card.fromTimestamp)} →{" "}
-          {formatTimestamp(card.toTimestamp)}
-        </span>
-        {sample && (
-          <Badge variant="outline">
-            Sample output — add OPENAI_API_KEY for real recaps
-          </Badge>
-        )}
-      </div>
+      <p className="text-xs text-muted-foreground">
+        Covers {formatTimestamp(card.fromTimestamp)} →{" "}
+        {formatTimestamp(card.toTimestamp)}
+      </p>
 
       {isEmpty ? (
         <p>Nothing captured in that window yet — try again in a moment.</p>
@@ -76,45 +103,62 @@ export function CatchUpCardView({ card, sample }: CatchUpCardViewProps) {
         <>
           {card.currentTopic && (
             <section className="space-y-1.5">
-              <h3 className="font-medium">Current topic</h3>
-              <p>{card.currentTopic}</p>
+              <SectionLabel className="text-section-thread">Now</SectionLabel>
+              <p className="font-medium leading-(--app-leading)">
+                {card.currentTopic}
+              </p>
             </section>
           )}
 
-          <CardSection title="What changed" items={card.whatChanged} />
-          <CardSection title="Decisions" items={card.decisions} />
           <CardSection
-            title="Possible tasks for you"
-            items={card.possibleTasksForUser}
+            label="Decided"
+            labelClassName="text-section-ask"
+            items={card.decisions}
+            emphasize
           />
-          <CardSection title="Open questions" items={card.openQuestions} />
-
-          <section className="space-y-1.5">
-            <h3 className="font-medium">Were you mentioned?</h3>
-            {card.userMentions.length > 0 ? (
-              <ul className="space-y-1">
-                {card.userMentions.map((mention) => (
-                  <li key={mention} className="flex gap-2">
-                    <span aria-hidden="true">•</span>
-                    <span>{mention}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>
-                {card.mentionStatus === "possibly_mentioned"
-                  ? "You may have been mentioned, but it wasn't clear."
-                  : "You were not clearly asked to do anything."}
-              </p>
-            )}
-          </section>
+          <CardSection
+            label="For you"
+            labelClassName="text-section-mention"
+            items={card.possibleTasksForUser}
+            emphasize
+          />
+          {card.userMentions.length > 0 ? (
+            <CardSection
+              label="Mentioned"
+              labelClassName="text-section-mention"
+              items={card.userMentions}
+            />
+          ) : (
+            card.mentionStatus === "possibly_mentioned" && (
+              <section className="space-y-1.5">
+                <SectionLabel className="text-section-mention">
+                  Mentioned
+                </SectionLabel>
+                <p className="leading-(--app-leading)">
+                  You may have been mentioned, but it wasn&apos;t clear.
+                </p>
+              </section>
+            )
+          )}
+          <CardSection
+            label="What changed"
+            labelClassName="text-muted-foreground"
+            items={card.whatChanged}
+          />
+          <CardSection
+            label="Open"
+            labelClassName="text-section-tasks"
+            items={card.openQuestions}
+          />
 
           {card.suggestedQuestion && (
             <section className="space-y-1.5">
-              <h3 className="font-medium">Question you could ask</h3>
-              <blockquote className="border-l-2 border-border pl-3">
+              <SectionLabel className="text-section-ask">
+                Try asking
+              </SectionLabel>
+              <p className="font-medium leading-(--app-leading)">
                 &ldquo;{card.suggestedQuestion}&rdquo;
-              </blockquote>
+              </p>
             </section>
           )}
         </>

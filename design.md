@@ -78,10 +78,10 @@ One window, two panes at desktop width (single stacked column below `lg`). Layou
 | Auto notes: tasks/questions (ochre) | `#8a6612` | `#e8b94a` | `#00e676` |
 | Auto notes: mentions (pink) | `#c2185b` | `#ff7fae` | `#ff9df2` |
 
-Meaning lives **in** the transcript: decision/action lines render in color + semibold (heuristically tagged for live sessions via `tagCaptionChunk` in `lib/captions.ts`; demo flags pass through). **Every caption line is tappable** — hover/focus shows a wash + "Ask →", and the tap sends the line to the chat (`line_context` prompt) for a plain-language explanation with context, tone, and a suggested follow-up. The right pane is the **Ask the meeting** chat alone, a flat `bg-card` surface. On mobile the captions column stacks before the chat, which keeps a `55dvh` floor. The demo summary paragraph has no UI (the `summary` store field remains for future `/api/summary` wiring).
+Meaning lives **in** the transcript: decision/action lines render in color + semibold (heuristically tagged for live sessions via `tagCaptionChunk` in `lib/captions.ts`; demo flags pass through). **Every caption line is tappable** — hover/focus shows a wash + "Ask →", and the tap sends the line to the chat (`line_context` prompt) for a plain-language explanation with context, tone, and a suggested follow-up. The right pane is the **Meeting assistant** chat alone, a flat `bg-card` surface. On mobile the captions column stacks before the chat, which keeps a `55dvh` floor. The demo summary paragraph has no UI (the `summary` store field remains for future `/api/summary` wiring).
 
 ### Header
-- Left: status — pulsing green dot + "Listening" while capturing; "Demo" badge in demo mode; nothing when idle.
+- Left: status — pulsing green dot + "Listening" while capturing (demo included: the demo presents as a real meeting, no "Demo"/"Sample" copy anywhere in the experience); nothing when idle.
 - Center: app title, small and quiet ("Catch-Up Companion").
 - Right: the **hero pill** plus utilities:
   - Idle → `[ 🖥 Start listening ]` — primary, size `xl`, the only prominent control on screen.
@@ -93,13 +93,15 @@ Meaning lives **in** the transcript: decision/action lines render in color + sem
 ### Main grid
 - Max width `72rem`, centered; `lg` two columns (`1fr / 360–420px` rail), stacked below.
 - Left: the captions hero (neutral, internal scroll) with tappable, meaning-colored lines.
-- Right rail: the **Ask the meeting** chat panel alone (`flex-1`, internal scroll, composer pinned at the bottom).
+- Right rail: the **Meeting assistant** chat panel alone (`flex-1`, internal scroll, composer pinned at the bottom).
 - Bottom padding clears the floating bar; on mobile the page scrolls and captions keep a `45dvh` floor.
 
-### Ask the meeting — chat panel
+### Meeting assistant — chat panel
 - A running conversation for the session, stored as `chatMessages` in `captionStore` (user bubbles, plain answers, flat auto notes, error lines with retry; capped at 200, cleared on session reset).
 - **Flat output — no card-over-card**: the user's ink bubble is the only filled element; answers are plain left-aligned text with the transcript quote as an indented muted line (regular weight, never italic); auto notes are just a colored small-caps label line (`● MENTION · 1:20`) + the quote — no confidence hints, no redundant sentence (the label word "POSSIBLE" carries the uncertainty). Messages separate by whitespace (`space-y-5`), not boxes.
-- **Quick asks** (`QuickAsks.tsx`) — exactly three, each saving real typing for someone who lost the thread: **Catch me up** (opens the recap dialog), **What are we deciding?**, **What should I ask?**. They render as large stacked **starter buttons** in the empty chat and collapse to one **slim pill row** above the composer once any message exists. ("Anything for me to do?" is covered by the auto notes; explaining a term is just typed into the composer.)
+- **Quick asks** (`QuickAsks.tsx`) — exactly three, each saving real typing for someone who lost the thread: **What are we deciding?**, **Anything for me to do?**, **What should I ask?**. "Catch me up" lives only in the floating pill so it isn't duplicated. They render as large stacked **starter buttons** in the empty chat and collapse to one **slim pill row** above the composer once any message exists.
+- **Perceived pace**: answers never appear instantly — a ~800ms minimum "thinking" window keeps the skeleton readable instead of flashing.
+- **Recap format** (`CatchUpCardView`): no wall of text — colored small-caps section labels in the app's shared language (NOW teal · DECIDED lavender · FOR YOU / MENTIONED pink · WHAT CHANGED muted · OPEN ochre · TRY ASKING lavender), with decisions and for-you items in medium weight so highlights stand out.
 - **Free-text composer**: sends `promptKey: "custom"` to `/api/ask` (question ≤300 chars, transcript-grounded guardrails, deterministic keyword-match fallback without an API key). Input stays enabled while an answer loads so focus survives.
 - **Proactive auto notes**: mentions/tasks/questions detected for the user auto-append into the thread as they're derived — deduped for the whole session by `type:sourceChunkId`, max 3 per refresh, source quote snapshotted at post time; announced via the aria-live announcer.
 - Answers: 1–3 plain sentences from the last 3 minutes of transcript + a verbatim source snippet; skeleton while loading (outside the `role="log"` region so screen readers hear each completed message exactly once); "Sample" badge without an API key.

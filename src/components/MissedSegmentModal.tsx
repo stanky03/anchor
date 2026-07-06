@@ -147,9 +147,7 @@ export function MissedSegmentModal({
           </div>
         )}
 
-        {result && !loading && (
-          <CatchUpCardView card={result.card} sample={result.sample} />
-        )}
+        {result && !loading && <CatchUpCardView card={result.card} />}
       </DialogContent>
     </Dialog>
   );

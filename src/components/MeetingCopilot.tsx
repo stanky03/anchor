@@ -151,7 +151,7 @@ export function MeetingCopilot() {
       updatedAt: Date.now(),
       coversFromTimestamp: 0,
     });
-    announce("Demo started");
+    announce("Listening started");
 
     const controller = new AbortController();
     demoAbortRef.current = controller;
@@ -165,7 +165,7 @@ export function MeetingCopilot() {
 
     if (!controller.signal.aborted) {
       setDemoEnded(true);
-      announce("Demo finished. Start listening or replay the demo.");
+      announce("Meeting ended.");
     }
   };
 
@@ -264,22 +264,20 @@ export function MeetingCopilot() {
           aria-label="Meeting orientation"
           className="order-2 flex flex-col gap-4 lg:min-h-0"
         >
-          <ChatPanel onOpenCatchUp={() => setMissedOpen(true)} />
+          <ChatPanel />
         </aside>
 
         <div className="order-1 flex flex-col gap-4 lg:min-h-0">
           <CaptionDisplay />
           {demoEnded && (
             <div className="flex flex-col gap-3 rounded-2xl border bg-card p-4 text-card-foreground sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm">
-                Demo finished. You can start listening or replay the demo.
-              </p>
+              <p className="text-sm">Meeting ended.</p>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" onClick={startLive}>
                   Start listening
                 </Button>
                 <Button size="sm" variant="ghost" onClick={startDemo}>
-                  Replay demo
+                  Play again
                 </Button>
               </div>
             </div>

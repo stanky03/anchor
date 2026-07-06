@@ -1,65 +1,65 @@
 {
-  "title": "Sprint Planning \u2014 Noisy Remote Call",
-  "durationSec": 210,
+  "title": "Sprint Planning — Noisy Remote Call",
+  "durationSec": 75,
   "summary": "The team is fixing a login bug by Friday. Sarah will work on the API. Marcus will write a document about how sign-in works by Wednesday. The old dashboard stays for now; the new design comes later. Alex will email stakeholders after the meeting.",
   "chunks": [
     {
       "id": "c1",
       "speaker": "Alex (PM)",
       "text": "Okay, let's recap. We need the login fix shipped by Friday. Sarah owns the API piece.",
-      "timestamp": 5,
+      "timestamp": 3,
       "isActionItem": true
     },
     {
       "id": "c2",
       "speaker": "Sarah (Dev)",
       "text": "Uh, I can do the API, but we should probably sync with Marcus on the auth flow before I start.",
-      "timestamp": 18
+      "timestamp": 10
     },
     {
       "id": "c3",
       "speaker": "Jordan (Design)",
-      "text": "Sorry, quick question \u2014 are we keeping the old dashboard or switching to the new one?",
-      "timestamp": 32
+      "text": "Sorry, quick question — are we keeping the old dashboard or switching to the new one?",
+      "timestamp": 17
     },
     {
       "id": "c4",
       "speaker": "Alex (PM)",
       "text": "Good question. Let's keep the old dashboard for v1. Redesign is Q2.",
-      "timestamp": 42,
+      "timestamp": 24,
       "isDecision": true
     },
     {
       "id": "c5",
       "speaker": "Sarah (Dev)",
       "text": "Got it. So we'll need to refactor the OAuth callback handler for the IdP integration. Marcus should document the flow.",
-      "timestamp": 80
+      "timestamp": 32
     },
     {
       "id": "c6",
       "speaker": "Alex (PM)",
       "text": "Agreed. Marcus, can you have the auth doc ready by Wednesday?",
-      "timestamp": 95,
+      "timestamp": 40,
       "isActionItem": true
     },
     {
       "id": "c7",
       "speaker": "Sarah (Dev)",
       "text": "I'll block time tomorrow to review it with him.",
-      "timestamp": 105
+      "timestamp": 47
     },
     {
       "id": "c8",
       "speaker": "Jordan (Design)",
       "text": "Works for me. I'll update the Figma with the v1 dashboard labels only.",
-      "timestamp": 150,
+      "timestamp": 54,
       "isActionItem": true
     },
     {
       "id": "c9",
       "speaker": "Alex (PM)",
       "text": "Perfect. So to summarize: login fix by Friday, Sarah on API, Marcus on auth doc by Wednesday, dashboard stays as-is for v1. I'll send a stakeholder email after this call.",
-      "timestamp": 170,
+      "timestamp": 62,
       "isDecision": true,
       "isActionItem": true
     },
@@ -67,7 +67,7 @@
       "id": "c10",
       "speaker": "Sarah (Dev)",
       "text": "Sounds good. Thanks everyone.",
-      "timestamp": 195
+      "timestamp": 68
     }
   ]
 }

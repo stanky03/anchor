@@ -4,7 +4,6 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 import { RefreshCw } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatTimestamp } from "@/lib/captions";
@@ -52,11 +51,6 @@ function ChatMessageItem({
             <p className="pl-3 leading-(--app-leading) text-muted-foreground">
               &ldquo;{stripQuotes(message.snippet)}&rdquo;
             </p>
-          )}
-          {message.sample && (
-            <Badge variant="outline">
-              Sample output — add OPENAI_API_KEY for real answers
-            </Badge>
           )}
         </div>
       );
@@ -150,7 +144,7 @@ export function ChatMessageList({
         role="log"
         aria-live="polite"
         aria-relevant="additions"
-        aria-label="Ask the meeting conversation"
+        aria-label="Meeting assistant conversation"
         className="space-y-5"
       >
         {messages.map((message) => (

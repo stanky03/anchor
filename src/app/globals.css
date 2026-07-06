@@ -59,10 +59,9 @@
 /* calm-light = Clay identity (getdesign.md/clay): cream canvas, near-black
    ink, hairline borders, saturated accents used sparingly. */
 :root {
-  --background: #fffaf0;
+  /* Deeper cream so the white panels clearly separate from the canvas. */
+  --background: #faf1dd;
   --foreground: #0a0a0a;
-  /* White panels on the cream canvas: clear plane separation without
-     shadows. Secondary text and hairlines darkened for contrast. */
   --card: #ffffff;
   --card-foreground: #1a1a1a;
   --popover: #ffffff;
@@ -76,8 +75,8 @@
   --accent: #faf5e8;
   --accent-foreground: #0a0a0a;
   --destructive: #ef4444;
-  --border: #ddd6c6;
-  --input: #ddd6c6;
+  --border: #cbc2ab;
+  --input: #cbc2ab;
   --ring: #1a3a3a;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
@@ -91,7 +90,7 @@
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #f5f0e0;
   --sidebar-accent-foreground: #0a0a0a;
-  --sidebar-border: #ddd6c6;
+  --sidebar-border: #cbc2ab;
   --sidebar-ring: #1a3a3a;
   /* Caption semantic colors (AA on this theme's background). */
   --caption-decision: #5b46b4;
@@ -137,8 +136,8 @@
   --accent: #22383a;
   --accent-foreground: #f5f0e0;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 20%);
-  --input: oklch(1 0 0 / 24%);
+  --border: oklch(1 0 0 / 28%);
+  --input: oklch(1 0 0 / 32%);
   --ring: #a4d4c5;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);

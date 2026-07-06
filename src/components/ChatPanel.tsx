@@ -16,11 +16,11 @@ import { useCaptionStore } from "@/stores/captionStore";
 import { useSettingsStore } from "@/stores/settingsStore";
 import type { AskParams, AskResponse } from "@/types";
 
-type ChatPanelProps = {
-  onOpenCatchUp: () => void;
-};
+// Answers never appear instantly — a short minimum "thinking" window keeps
+// the loading state readable instead of flashing.
+const MIN_PENDING_MS = 800;
 
-export function ChatPanel({ onOpenCatchUp }: ChatPanelProps) {
+export function ChatPanel() {
   const mode = useCaptionStore((state) => state.mode);
   const chatMessages = useCaptionStore((state) => state.chatMessages);
   const appendChatMessage = useCaptionStore((state) => state.appendChatMessage);
@@ -52,6 +52,7 @@ export function ChatPanel({ onOpenCatchUp }: ChatPanelProps) {
 
     setPending(true);
     announce("Thinking about that");
+    const startedAt = Date.now();
 
     const { playbackTimeSec, meetingSignals } = useCaptionStore.getState();
     const transcript = getTranscriptTextForWindow(
@@ -85,6 +86,10 @@ export function ChatPanel({ onOpenCatchUp }: ChatPanelProps) {
       }
 
       const result = (await response.json()) as AskResponse;
+      const remaining = MIN_PENDING_MS - (Date.now() - startedAt);
+      if (remaining > 0) {
+        await new Promise((resolve) => setTimeout(resolve, remaining));
+      }
       appendChatMessage({
         id: crypto.randomUUID(),
         kind: "answer",
@@ -151,7 +156,7 @@ export function ChatPanel({ onOpenCatchUp }: ChatPanelProps) {
         >
           <h2>
             <MessageCircleQuestion className="size-4" aria-hidden />
-            Ask the meeting
+            Meeting assistant
           </h2>
         </CardTitle>
       </CardHeader>
@@ -166,7 +171,6 @@ export function ChatPanel({ onOpenCatchUp }: ChatPanelProps) {
               variant="starters"
               sessionActive={sessionActive}
               pending={pending}
-              onOpenCatchUp={onOpenCatchUp}
               onAsk={(params, label) => void ask(params, label)}
             />
           }
@@ -176,7 +180,6 @@ export function ChatPanel({ onOpenCatchUp }: ChatPanelProps) {
             variant="row"
             sessionActive={sessionActive}
             pending={pending}
-            onOpenCatchUp={onOpenCatchUp}
             onAsk={(params, label) => void ask(params, label)}
           />
         )}

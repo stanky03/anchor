@@ -1,9 +1,9 @@
 "use client";
 
 import {
+  ListChecks,
   MessageCircleQuestion,
   Scale,
-  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -13,19 +13,18 @@ type QuickAsksProps = {
   variant: "starters" | "row";
   sessionActive: boolean;
   pending: boolean;
-  onOpenCatchUp: () => void;
   onAsk: (params: AskParams, label: string) => void;
 };
 
 // The quick asks exist for the moment you've lost the thread and can't
-// formulate the question yourself — each one saves real typing.
+// formulate the question yourself — each one saves real typing. ("Catch me
+// up" lives only in the floating pill, so it isn't duplicated here.)
 // "starters" fills the empty chat; "row" is the slim pill row above the
 // composer once a conversation exists.
 export function QuickAsks({
   variant,
   sessionActive,
   pending,
-  onOpenCatchUp,
   onAsk,
 }: QuickAsksProps) {
   const askDisabled = !sessionActive || pending;
@@ -48,20 +47,22 @@ export function QuickAsks({
       <Button
         variant="outline"
         {...buttonProps}
-        disabled={!sessionActive}
-        onClick={onOpenCatchUp}
-      >
-        <Sparkles aria-hidden />
-        Catch me up
-      </Button>
-      <Button
-        variant="outline"
-        {...buttonProps}
         disabled={askDisabled}
         onClick={() => onAsk({ promptKey: "deciding" }, "What are we deciding?")}
       >
         <Scale aria-hidden />
         What are we deciding?
+      </Button>
+      <Button
+        variant="outline"
+        {...buttonProps}
+        disabled={askDisabled}
+        onClick={() =>
+          onAsk({ promptKey: "tasks_for_me" }, "Anything for me to do?")
+        }
+      >
+        <ListChecks aria-hidden />
+        Anything for me to do?
       </Button>
       <Button
         variant="outline"
